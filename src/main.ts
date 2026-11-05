@@ -23,9 +23,9 @@ export default class PodarcisPlugin extends Plugin {
     await this.app.workspace.revealLeaf(leaf);
   }
 
-  run(config?: Config) {
+  run(config?: Config, update = false) {
     const root = (this.app.vault.adapter as FileSystemAdapter).getBasePath();
-    return runVault(this.settings.uv, this.settings.skill, root, config);
+    return runVault(this.settings.uv, this.settings.skill, root, config, update);
   }
 }
 
@@ -44,11 +44,11 @@ class SetupView extends ItemView {
     await this.refresh();
   }
 
-  async refresh(config?: Config) {
+  async refresh(config?: Config, update = false) {
     if (!this.state) this.contentEl.setText('Loading Podarcis configuration…');
     let message: string;
     try {
-      const { state, log } = await this.plugin.run(config);
+      const { state, log } = await this.plugin.run(config, update);
       this.state = state;
       message = log;
     } catch (error) {
@@ -64,6 +64,7 @@ class SetupView extends ItemView {
     renderForm(this.contentEl, this.state, message, {
       apply: (next) => this.refresh(next),
       reload: () => this.refresh(),
+      update: () => this.refresh(undefined, true),
     });
   }
 }

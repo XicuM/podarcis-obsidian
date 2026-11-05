@@ -1,5 +1,8 @@
 .podarcis-panel h4 { margin: 1em 0 0.4em; }
-.podarcis-panel input[type='text'] { width: 100%; }
+.podarcis-panel input[type='text'], .podarcis-panel input[type='password'] { width: 100%; }
+.podarcis-row { display: flex; gap: 4px; margin-bottom: 4px; }
+.podarcis-row input[type='text'] { flex: 1; min-width: 0; }
+.podarcis-add { margin-bottom: 0.6em; }
 .podarcis-repo { display: flex; flex-direction: column; gap: 2px; margin-bottom: 0.6em; }
 .podarcis-name { font-weight: 600; }
 .podarcis-muted { color: var(--text-muted); font-size: var(--font-ui-smaller); }
