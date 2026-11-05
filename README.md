@@ -1,12 +1,12 @@
 # Podarcis for Obsidian
 
-A sidebar to configure a [Podarcis](https://github.com/XicuM/podarcis-skill) research vault: the Git repositories for `sources/`, `wiki/`, and `workspace/`, the agents to set up, and MCP servers. **Apply** saves `podarcis.yaml` and runs the skill's setup, which clones the repositories and configures every agent through [dotagents](https://dotagents.sentry.dev/).
+A sidebar to configure a [Podarcis](https://github.com/XicuM/podarcis-skill) research vault: the Git repositories for `sources/`, `wiki/`, and `workspace/`, the agents to set up, and MCP servers. **Apply** saves `podarcis.yaml` and runs the skill's setup, which clones the repositories and configures every agent.
 
-In a vault without the skill, the sidebar first installs the latest podarcis-skill release into `.agents/skills/podarcis`.
+In a vault without the skill, the sidebar runs the latest podarcis-skill release from GitHub, which installs it into `.agents/skills/podarcis`.
 
 ## Requirements
 
-Obsidian desktop, git, [uv](https://docs.astral.sh/uv/), and Node.js 22+, with network access on first use. Apps started from the desktop may not see your shell `PATH`; set uv's absolute path in the plugin settings if needed.
+Obsidian desktop and [uv](https://docs.astral.sh/uv/), plus git to sync folders with Git repositories, with network access on first use. Apps started from the desktop may not see your shell `PATH`; set uv's absolute path in the plugin settings if needed.
 
 ## Install
 

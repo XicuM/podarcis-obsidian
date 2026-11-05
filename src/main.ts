@@ -57,7 +57,7 @@ class SetupView extends ItemView {
     if (!this.state) {
       this.contentEl.empty();
       this.contentEl.createEl('pre', { text: message, cls: 'podarcis-message' });
-      this.contentEl.createEl('p', { text: `Check the uv command and the skill path (${this.plugin.settings.skill}) in this plugin's settings. The panel installs the skill on first use, which needs Node.js (npx) and network access.` });
+      this.contentEl.createEl('p', { text: `Check the uv command and the skill path (${this.plugin.settings.skill}) in this plugin's settings. The panel installs the skill on first use, which needs network access.` });
       this.contentEl.createEl('button', { text: 'Retry' }).onclick = () => this.refresh();
       return;
     }
