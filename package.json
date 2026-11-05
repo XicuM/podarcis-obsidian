@@ -1,0 +1,20 @@
+{
+  "name": "podarcis-obsidian",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Obsidian sidebar to configure a Podarcis research vault.",
+  "license": "AGPL-3.0",
+  "author": "XicuM",
+  "repository": { "type": "git", "url": "git+https://github.com/XicuM/podarcis-obsidian.git" },
+  "engines": { "node": ">=22.18" },
+  "scripts": {
+    "build": "tsc && node esbuild.config.mjs",
+    "test": "node --test test/"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "esbuild": "0.28.2",
+    "obsidian": "1.14.4",
+    "typescript": "7.0.2"
+  }
+}
