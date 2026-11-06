@@ -5,7 +5,7 @@ import * as path from 'node:path';
 import { afterEach, beforeEach, test } from 'node:test';
 import { runVault } from '../src/run.ts';
 
-const STATE = { config: { agents: [], repos: {}, mcp: [], skills: [] }, catalogue: {}, repos: {} };
+const STATE = { config: { repos: {}, mcp: [], skills: [] }, catalogue: {}, repos: {} };
 const PATH = process.env.PATH;
 const FETCH = globalThis.fetch;
 let root: string;
@@ -58,7 +58,7 @@ test('reads the configuration with the installed skill', async () => {
 });
 
 test('applies a configuration through setup --stdin', async () => {
-  const config = { agents: ['claude'], repos: { sources: null, wiki: null, workspace: null }, mcp: [], skills: [] };
+  const config = { repos: { sources: null, wiki: null, workspace: null }, mcp: [], skills: [] };
   await runVault('uv', skillAt(mkdtempSync(path.join(tmpdir(), 'podarcis-skill-'))), root, config);
   assert.match(readFileSync(path.join(root, 'uv.args'), 'utf8'), /setup --stdin$/m);
   assert.deepEqual(JSON.parse(readFileSync(path.join(root, 'uv.stdin'), 'utf8')), config);
@@ -74,13 +74,14 @@ test('runs the latest release from GitHub when the skill is missing', async () =
     `run --quiet https://raw.githubusercontent.com/XicuM/podarcis-skill/v2.1.0/skills/podarcis/scripts/podarcis.py --root ${root} config`);
 });
 
-test('updates by running setup from the latest release over an installed skill', async () => {
+test('adds what PodarcisNest says about the workspace', async () => {
   skillAt(path.join(root, '.agents/skills/podarcis'));
-  release(200, { tag_name: 'v2.1.0' });
-  const { log } = await runVault('uv', '.agents/skills/podarcis', root, undefined, true);
-  assert.equal(log, 'Installed Podarcis v2.1.0.\nsetup log');
-  assert.equal(readFileSync(path.join(root, 'uv.args'), 'utf8').trim(),
-    `run --quiet https://raw.githubusercontent.com/XicuM/podarcis-skill/v2.1.0/skills/podarcis/scripts/podarcis.py --root ${root} setup`);
+  mkdirSync(path.join(root, '.agents/podarcis'), { recursive: true });
+  writeFileSync(path.join(root, '.agents/podarcis/nest.json'), JSON.stringify({ sources_mode: 'team', locked: true, account_url: 'https://nest.example/account', extra: 1 }));
+  const { state } = await runVault('uv', '.agents/skills/podarcis', root);
+  assert.deepEqual(state.nest, { sources_mode: 'team', locked: true, account_url: 'https://nest.example/account' });
+  writeFileSync(path.join(root, '.agents/podarcis/nest.json'), 'not json');
+  assert.equal((await runVault('uv', '.agents/skills/podarcis', root)).state.nest, undefined);
 });
 
 test('reports a failed release lookup without running uv', async () => {

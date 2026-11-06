@@ -3,7 +3,7 @@ import { Config, renderForm, State } from './form';
 import { runVault } from './run';
 
 const VIEW = 'podarcis-setup';
-const DEFAULTS = { uv: 'uv', skill: '.agents/skills/podarcis' };
+const DEFAULTS = { uv: 'uv', skill: '.agents/skills/podarcis', apiKeys: [] as string[] };
 
 export default class PodarcisPlugin extends Plugin {
   settings = { ...DEFAULTS };
@@ -23,9 +23,9 @@ export default class PodarcisPlugin extends Plugin {
     await this.app.workspace.revealLeaf(leaf);
   }
 
-  run(config?: Config, update = false) {
+  run(config?: Config) {
     const root = (this.app.vault.adapter as FileSystemAdapter).getBasePath();
-    return runVault(this.settings.uv, this.settings.skill, root, config, update);
+    return runVault(this.settings.uv, this.settings.skill, root, config);
   }
 }
 
@@ -44,11 +44,11 @@ class SetupView extends ItemView {
     await this.refresh();
   }
 
-  async refresh(config?: Config, update = false) {
+  async refresh(config?: Config) {
     if (!this.state) this.contentEl.setText('Loading Podarcis configuration…');
     let message: string;
     try {
-      const { state, log } = await this.plugin.run(config, update);
+      const { state, log } = await this.plugin.run(config);
       this.state = state;
       message = log;
     } catch (error) {
@@ -64,8 +64,7 @@ class SetupView extends ItemView {
     renderForm(this.contentEl, this.state, message, {
       apply: (next) => this.refresh(next),
       reload: () => this.refresh(),
-      update: () => this.refresh(undefined, true),
-    });
+    }, this.plugin.settings.apiKeys);
   }
 }
 
@@ -76,7 +75,7 @@ class SettingsTab extends PluginSettingTab {
 
   display() {
     this.containerEl.empty();
-    const field = (name: string, desc: string, key: keyof typeof DEFAULTS) =>
+    const field = (name: string, desc: string, key: 'uv' | 'skill') =>
       new Setting(this.containerEl).setName(name).setDesc(desc).addText((text) =>
         text.setPlaceholder(DEFAULTS[key]).setValue(this.plugin.settings[key]).onChange(async (value) => {
           this.plugin.settings[key] = value.trim() || DEFAULTS[key];
@@ -84,5 +83,11 @@ class SettingsTab extends PluginSettingTab {
         }));
     field('uv command', 'Name or absolute path of uv; apps started from the desktop may not see your shell PATH.', 'uv');
     field('Podarcis skill', 'Skill folder, relative to the vault or absolute. The panel installs it at the default path when missing.', 'skill');
+    new Setting(this.containerEl).setName('API keys')
+      .setDesc('Extra credentials to ask for in the panel, such as model API keys (e.g. GEPETO_API_KEY), separated by commas. They are saved to .agents/.env.')
+      .addText((text) => text.setValue(this.plugin.settings.apiKeys.join(', ')).onChange(async (value) => {
+        this.plugin.settings.apiKeys = value.split(',').map((k) => k.trim()).filter(Boolean);
+        await this.plugin.saveData(this.plugin.settings);
+      }));
   }
 }
