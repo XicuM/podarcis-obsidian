@@ -4,7 +4,7 @@ A sidebar to configure a [Podarcis](https://github.com/XicuM/podarcis-skill) res
 
 In a [PodarcisNest](https://github.com/XicuM/podarcis-nest) workspace, the server provides Podarcis and writes `.agents/podarcis/nest.json`. The sidebar then shows the workspace's sources mode (team Drive files, own papers, or both) with a link to the Account page to change it, and hides the repositories when the administrator manages them.
 
-In a vault without the skill, the sidebar runs the latest podarcis-skill release from GitHub, which installs it into `.agents/skills/podarcis`.
+In a vault without the skill, the sidebar runs the latest podarcis-skill release from GitHub, which installs it into `.agents/podarcis/lib` and links the vault's `AGENTS.md` to the Podarcis instructions. A setting that still names the old `.agents/skills/podarcis` uses the new path.
 
 ## Requirements
 

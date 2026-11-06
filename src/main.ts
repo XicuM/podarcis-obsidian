@@ -1,9 +1,9 @@
 import { App, FileSystemAdapter, ItemView, Plugin, PluginSettingTab, Setting, WorkspaceLeaf } from 'obsidian';
 import { Config, renderForm, State } from './form';
-import { runVault } from './run';
+import { DEFAULT_SKILL, runVault } from './run';
 
 const VIEW = 'podarcis-setup';
-const DEFAULTS = { uv: 'uv', skill: '.agents/skills/podarcis', apiKeys: [] as string[] };
+const DEFAULTS = { uv: 'uv', skill: DEFAULT_SKILL, apiKeys: [] as string[] };
 
 export default class PodarcisPlugin extends Plugin {
   settings = { ...DEFAULTS };
@@ -82,7 +82,7 @@ class SettingsTab extends PluginSettingTab {
           await this.plugin.saveData(this.plugin.settings);
         }));
     field('uv command', 'Name or absolute path of uv; apps started from the desktop may not see your shell PATH.', 'uv');
-    field('Podarcis skill', 'Skill folder, relative to the vault or absolute. The panel installs it at the default path when missing.', 'skill');
+    field('Podarcis install', 'Install folder, relative to the vault or absolute. The panel installs it at the default path when missing.', 'skill');
     new Setting(this.containerEl).setName('API keys')
       .setDesc('Extra credentials to ask for in the panel, such as model API keys (e.g. GEPETO_API_KEY), separated by commas. They are saved to .agents/.env.')
       .addText((text) => text.setValue(this.plugin.settings.apiKeys.join(', ')).onChange(async (value) => {
